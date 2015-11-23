@@ -27,13 +27,13 @@ class MDPGrid(MarkovDecisionProcess):
 
         # Action space
         if n_rows == 1:
-            A = ['LEFT','RIGHT']
+            A = ['LEFT', 'RIGHT']
         else:
-            A = ['LEFT','RIGHT','UP','DOWN']
+            A = ['LEFT', 'RIGHT', 'UP', 'DOWN']
         n_actions = len(A)
 
         # Transition function S x A x S -> probability
-        P = np.zeros((n_states,n_actions,n_states,))
+        P = np.zeros((n_states, n_actions, n_states,))
         for i_row in range(n_rows):
             for i_col in range(n_cols):
                 s = i_row*n_cols + i_col
@@ -44,14 +44,14 @@ class MDPGrid(MarkovDecisionProcess):
                 # o 2   5  6  7  8 state 's'
                 # w 3   9 10 11 12
                 #
-        
+
                 # Here come the transitions for the 'LEFT' action
                 LEFT = 0
-                if i_col>0:
-                    P[s,LEFT,s-1] = 1.0-stochasticity; # Successful move LEFT
-                    P[s,LEFT,s] = stochasticity; # Fail: stayed where you are
+                if i_col > 0:
+                    P[s,LEFT, s-1] = 1.0-stochasticity # Successful move LEFT
+                    P[s,LEFT,s] = stochasticity # Fail: stayed where you are
                 else:
-                    P[s,LEFT,s] = 1.0; # Always bumps into wall on far left 
+                    P[s,LEFT,s] = 1.0 # Always bumps into wall on far left 
                     
                 # Here come the transitions for the 'RIGHT' action
                 RIGHT = 1

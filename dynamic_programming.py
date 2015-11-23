@@ -33,17 +33,23 @@ def policyEvaluation(mdp, policy, n_iterations=1000, verbose=False, ax=None):
         mdp.plotValues(ax, V, policy)
 
     # IMPLEMENT POLICY EVALUATION HERE
+    epsilon = 0.01
     for _ in range(n_iterations):
         delta = 0
         for i, state in enumerate(mdp.S):
             value = V[i]
-            V[i] = np.sum(policy[i]*np.sum(mdp.P[]))
+            tmp = np.sum(mdp.P[i]*(mdp.R[i]+mdp.discount*V), axis=1)
+            V[i] = np.sum(policy[i]*tmp)
+            delta = max(delta, value - V[i])
+        if delta < epsilon:
+            break
 
     # Return values for the policy
     return V
 
 
-def valueIteration(mdp, policy=None, n_iterations=1000, verbose=False, ax=None):
+def valueIteration(mdp, policy=None, n_iterations=1000, verbose=False,
+                   ax=None):
     """ Perform value iteration, i.e. determine the optimal and values.
 
     Args:
@@ -71,6 +77,20 @@ def valueIteration(mdp, policy=None, n_iterations=1000, verbose=False, ax=None):
     V = np.zeros((n_states,))
 
     # IMPLEMENT VALUE ITERATION HERE
+    epsilon = 0.01
+    for _ in range(n_iterations):
+        delta = 0
+        for i in range(n_states):
+            value = V[i]
+            tmp = np.sum(mdp.P[i]*(mdp.R[i]+mdp.discount*V), axis=1)
+            V[i] = np.max(tmp)
+            delta = max(delta, value - V[i])
+        if delta < epsilon:
+            break
+
+    for i, state in enumerate(mdp.S):
+        tmp = np.sum(mdp.P[i, :, :]*(mdp.R[i, :]+mdp.discount*V), axis=1)
+        policy[i] = np.argmax(tmp)
 
     # Return (optimal?) values and (optimal?) policy
     return (V, policy)
