@@ -19,4 +19,6 @@ methods and
 
 [TP subject](http://perso.ensta-paristech.fr/~stulp/aic/monte_carlo_td.pdf)
 
-
+Works on :
+1. *agent_montecarlo_statevalues.py*
+2. smth

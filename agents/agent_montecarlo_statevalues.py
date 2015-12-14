@@ -19,23 +19,30 @@ class AgentMonteCarloV(AgentDiscrete):
         self._V = np.zeros((num_states,))  # Initialize values to 0
 
         # Later on for state/action values (Q), you will need something like:
-        # self._Q = np.zeros((num_states,num_actions,)) # Initialize Q-values
+        self._Q = np.zeros((num_states,num_actions,)) # Initialize Q-values
 
         # ANYTHING TO CODE HERE?
         # Any other things the agent needs to store to compute values?
-        #
-        #
-        #
-        #
+        self.results = []
+        for i in range(num_states):
+            self.results.append([])
+        self.observations = []
+        self.rewards = []
+        self.alpha = 1
 
     def newEpisode(self):
         """ Inform the agent that a new episode has started. """
         # ANYTHING TO CODE HERE?
-        #
-        #
-        #
-        #
-        pass
+        R = 0
+        for o, r in reversed(zip(self.observations, self.rewards)):
+            R += r
+            self.results[o].append(R)
+
+        for i, r_list in enumerate(self.results):
+            if r_list:
+                self._V[i] += self.alpha*(np.mean(r_list)-self._V[i])
+        self.observations = []
+        self.rewards = []
 
     def integrateObservation(self, obs):
         """ Integrate the current observation of the environment.
@@ -44,11 +51,7 @@ class AgentMonteCarloV(AgentDiscrete):
             may be equivalent to the state of the environment.
         """
         # ANYTHING TO CODE HERE?
-        #
-        #
-        #
-        #
-        pass
+        self.observations.append(obs)
 
     def getAction(self):
         """ Return a chosen action.
@@ -64,11 +67,7 @@ class AgentMonteCarloV(AgentDiscrete):
             reward (double): reward if r is positive, punishment otherwise
         """
         # ANYTHING TO CODE HERE?
-        #
-        #
-        #
-        #
-        pass
+        self.rewards.append(reward)
 
     def getValues(self):
         """Get the values the agent assigns to each state.
