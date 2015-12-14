@@ -61,7 +61,7 @@ def doExperiments(env, agents, n_learning_sessions,
 
             curves_for_this_agents[i_learning_session, :] = lc
 
-        mean_curves = np.mean(curves_for_this_agents, 0)
+        mean_curves = np.mean(curves_for_this_agents, axis=0)
 
         learning_curves[agent_name] = mean_curves
 
@@ -85,17 +85,21 @@ if __name__ == '__main__':
     # Make a dictionary, and fill it with agents
     agents_ = {}
 
-    from agents.agent_random import AgentRandom
-    agents_['Random'] = AgentRandom(n_states, n_actions)
+    # from agents.agent_random import AgentRandom
+    # agents_['Random'] = AgentRandom(n_states, n_actions)
 
-    from agents.agent_first_action import AgentFirstAction
-    agents_['FirstAction'] = AgentFirstAction(n_states, n_actions)
+    # from agents.agent_first_action import AgentFirstAction
+    # agents_['FirstAction'] = AgentFirstAction(n_states, n_actions)
 
     from agents.agent_montecarlo_statevalues import AgentMonteCarloV
-    agents_['MonteCarlo'] = AgentMonteCarloV(n_states, n_actions)
+    for alpha in np.linspace(0.01, 0.3, num=3):
+        for beta in np.linspace(0.9, 0.99, num=3):
+            name = 'MonteCarlo(a={:0.2f},B={:0.2f})'.format(alpha, beta)
+            agents_[name] = AgentMonteCarloV(n_states, n_actions,
+                                             alpha=alpha, beta=beta)
 
-    n_learning_sessions = 5
-    n_episodes = 200
+    n_learning_sessions = 10
+    n_episodes = 500
     max_actions = 1000
     verbose = False
 
@@ -107,9 +111,8 @@ if __name__ == '__main__':
     plotLearningCurves(learning_curves, ax)
     plt.show()
 
-    print('_____ Values _____')
-    print(agents_['MonteCarlo']._V)
+    # print('_____ Values _____')
+    # print(agents_['MonteCarlo']._V)
 
-    print('_____ Q(s,a) _____')
-    print(agents_['MonteCarlo']._Q)
-
+    # print('_____ Q(s,a) _____')
+    # print(agents_['MonteCarlo']._Q)

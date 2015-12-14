@@ -10,7 +10,7 @@ class AgentMonteCarloV(AgentDiscrete):
     """Implementation of an agent that learns V values for a random policy.
     """
 
-    def __init__(self, num_states, num_actions):
+    def __init__(self, num_states, num_actions, alpha=0.2, beta=0.95):
 
         # I have kept this compatible with both Python 2 and 3
         AgentDiscrete.__init__(self, num_states, num_actions)
@@ -19,7 +19,7 @@ class AgentMonteCarloV(AgentDiscrete):
         self._V = np.zeros((num_states,))  # Initialize values to 0
 
         # Later on for state/action values (Q), you will need something like:
-        self._Q = np.zeros((num_states,num_actions,)) # Initialize Q-values
+        self._Q = np.zeros((num_states, num_actions))  # Initialize Q-values
 
         # ANYTHING TO CODE HERE?
         # Any other things the agent needs to store to compute values?
@@ -32,7 +32,9 @@ class AgentMonteCarloV(AgentDiscrete):
         self.observations = []
         self.rewards = []
         self.actions = []
-        self.alpha = 1
+        self.alpha = alpha  # The update factor
+        self.epsilon = 1.0  # The probability of doing random action
+        self.beta = beta  # The decay of epsilon at each episode
 
     def newEpisode(self):
         """ Inform the agent that a new episode has started. """
@@ -41,8 +43,6 @@ class AgentMonteCarloV(AgentDiscrete):
         for o, r, a in reversed(zip(self.observations,
                                     self.rewards,
                                     self.actions)):
-            # if r == 100 and o == 0:
-            #     print('YES :'+str(o))
             R += r
             self.results[o][a].append(R)
 
@@ -51,9 +51,12 @@ class AgentMonteCarloV(AgentDiscrete):
                 if res:
                     self._Q[i, j] = self.alpha*(np.mean(res)-self._Q[i, j])
             self._V[i] += self.alpha*(np.mean(self._Q[i, :])-self._V[i])
+        # Reset the memorised policy history
         self.observations = []
         self.rewards = []
         self.actions = []
+        # Decay epsilon:
+        self.epsilon = self.epsilon*self.beta
 
     def integrateObservation(self, obs):
         """ Integrate the current observation of the environment.
@@ -70,7 +73,10 @@ class AgentMonteCarloV(AgentDiscrete):
             an action (int)
         """
         # Return a random action
-        action = random.randint(0, self._num_actions - 1)
+        if random.random() > self.epsilon:
+            action = np.argmax(self._Q[self.observations[-1], :])
+        else:
+            action = random.randint(0, self._num_actions - 1)
         self.actions.append(action)
         return action
 
