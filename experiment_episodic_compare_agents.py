@@ -95,7 +95,7 @@ if __name__ == '__main__':
     agents_['MonteCarlo'] = AgentMonteCarloV(n_states, n_actions)
 
     n_learning_sessions = 5
-    n_episodes = 100
+    n_episodes = 200
     max_actions = 1000
     verbose = False
 
@@ -109,3 +109,7 @@ if __name__ == '__main__':
 
     print('_____ Values _____')
     print(agents_['MonteCarlo']._V)
+
+    print('_____ Q(s,a) _____')
+    print(agents_['MonteCarlo']._Q)
+

@@ -25,24 +25,35 @@ class AgentMonteCarloV(AgentDiscrete):
         # Any other things the agent needs to store to compute values?
         self.results = []
         for i in range(num_states):
-            self.results.append([])
+            res = []
+            for j in range(num_actions):
+                res.append([])
+            self.results.append(res)
         self.observations = []
         self.rewards = []
+        self.actions = []
         self.alpha = 1
 
     def newEpisode(self):
         """ Inform the agent that a new episode has started. """
         # ANYTHING TO CODE HERE?
         R = 0
-        for o, r in reversed(zip(self.observations, self.rewards)):
+        for o, r, a in reversed(zip(self.observations,
+                                    self.rewards,
+                                    self.actions)):
+            # if r == 100 and o == 0:
+            #     print('YES :'+str(o))
             R += r
-            self.results[o].append(R)
+            self.results[o][a].append(R)
 
-        for i, r_list in enumerate(self.results):
-            if r_list:
-                self._V[i] += self.alpha*(np.mean(r_list)-self._V[i])
+        for i, result_list in enumerate(self.results):
+            for j, res in enumerate(result_list):
+                if res:
+                    self._Q[i, j] = self.alpha*(np.mean(res)-self._Q[i, j])
+            self._V[i] += self.alpha*(np.mean(self._Q[i, :])-self._V[i])
         self.observations = []
         self.rewards = []
+        self.actions = []
 
     def integrateObservation(self, obs):
         """ Integrate the current observation of the environment.
@@ -59,7 +70,9 @@ class AgentMonteCarloV(AgentDiscrete):
             an action (int)
         """
         # Return a random action
-        return random.randint(0, self._num_actions - 1)
+        action = random.randint(0, self._num_actions - 1)
+        self.actions.append(action)
+        return action
 
     def giveReward(self, reward):
         """ Reward or punish the agent.
@@ -91,4 +104,4 @@ class AgentMonteCarloV(AgentDiscrete):
         # This agent doesn't store Q-values, so return None
         # If it does store Q-values, this should become
         # return self._Q
-        return None
+        return self._Q
