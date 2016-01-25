@@ -36,7 +36,7 @@ class AgentMonteCarloV(AgentDiscrete):
         self.epsilon = 1.0  # The probability of doing random action
         self.beta = beta  # The decay of epsilon at each episode
 
-    def newEpisode(self):
+    def learn(self):
         """ Inform the agent that a new episode has started. """
         # ANYTHING TO CODE HERE?
         R = 0
@@ -51,6 +51,8 @@ class AgentMonteCarloV(AgentDiscrete):
                 if res:
                     self._Q[i, j] = self.alpha*(np.mean(res)-self._Q[i, j])
             self._V[i] += self.alpha*(np.mean(self._Q[i, :])-self._V[i])
+
+    def newEpisode(self):
         # Reset the memorised policy history
         self.observations = []
         self.rewards = []

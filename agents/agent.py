@@ -15,6 +15,10 @@ class AgentDiscrete:
         """ Inform the agent that a new episode has started. """
         pass
 
+    def learn(self):
+        """ Learn from the previous experiments."""
+        pass
+
     def integrateObservation(self, obs):
         """ Integrate the current observation of the environment.
         Args:
