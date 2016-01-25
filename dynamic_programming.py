@@ -90,7 +90,7 @@ def valueIteration(mdp, policy=None, n_iterations=1000, verbose=False,
 
     for i, state in enumerate(mdp.S):
         tmp = np.sum(mdp.P[i, :, :]*(mdp.R[i, :]+mdp.discount*V), axis=1)
-        policy[i] = np.argmax(tmp)
+        policy[i] = tmp
 
     # Return (optimal?) values and (optimal?) policy
     return (V, policy)
