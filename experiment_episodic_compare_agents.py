@@ -22,7 +22,7 @@ def plotLearningCurves(learning_curves, ax):
         ax.plot(learning_curve, label='agent: ' + agent_name)
     ax.set_xlabel('number of episodes')
     ax.set_ylabel('return')
-    ax.legend()
+    ax.legend(loc=2, bbox_to_anchor=(1., 1.))
 
 
 def doExperiments(env, agents, n_learning_sessions,
@@ -52,6 +52,8 @@ def doExperiments(env, agents, n_learning_sessions,
 
             print('env=' + env_name + '   agent=' + agent_name +
                   '   learning session=' + str(i_learning_session + 1))
+
+            # agent.reset()
 
             all_rewards = doEpisodes(
                 env, agent, n_episodes, max_actions, verbose)
@@ -92,14 +94,26 @@ if __name__ == '__main__':
     # agents_['FirstAction'] = AgentFirstAction(n_states, n_actions)
 
     from agents.agent_montecarlo_statevalues import AgentMonteCarloV
-    for alpha in np.linspace(0.01, 0.3, num=3):
-        for beta in np.linspace(0.9, 0.99, num=3):
-            name = 'MonteCarlo(a={:0.2f},B={:0.2f})'.format(alpha, beta)
-            agents_[name] = AgentMonteCarloV(n_states, n_actions,
-                                             alpha=alpha, beta=beta)
+    agents_['MonteCarlo()'] = AgentMonteCarloV(n_states, n_actions)
+    # for alpha in np.linspace(0.01, 0.3, num=3):
+    #     for beta in np.linspace(0.9, 0.99, num=3):
+    #         name = 'MonteCarlo(a={:0.2f},B={:0.2f})'.format(alpha, beta)
+    #         agents_[name] = AgentMonteCarloV(n_states, n_actions,
+    #                                          alpha=alpha, beta=beta)
 
-    n_learning_sessions = 10
-    n_episodes = 500
+    # from pybrain.rl.learners.valuebased import ActionValueTable
+    # from pybrain.rl.agents import LearningAgent
+    # from pybrain.rl.learners import Q, SARSA  # @UnusedImport
+
+    # controller = ActionValueTable(n_states, n_actions)
+    # controller.initialize(1.)
+    # learner = Q()
+    # agent = LearningAgent(controller, learner)
+    # agents_['Pybrain'] = agent
+
+    # LEARNING TESTS
+    n_learning_sessions = 2
+    n_episodes = 100
     max_actions = 1000
     verbose = False
 
@@ -107,7 +121,7 @@ if __name__ == '__main__':
         env, agents_, n_learning_sessions, n_episodes, max_actions, verbose)
 
     fig = plt.figure(1, figsize=(12, 6))
-    ax = fig.add_subplot(1, 1, 1)
+    ax = fig.add_axes([0.1, 0.1, 0.7, 0.75])
     plotLearningCurves(learning_curves, ax)
     plt.show()
 

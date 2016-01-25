@@ -1,6 +1,6 @@
 import random
 import matplotlib.pyplot as plt
-
+import numpy as np
 
 import environments
 import agents
@@ -37,6 +37,7 @@ def doEpisodes(env, agent, n_episodes, max_actions_per_episode, verbose=True):
             stepid += 1
 
             observation = env.getObservation()
+            observation = np.array([observation, ])
             agent.integrateObservation(observation)
 
             action = agent.getAction()
@@ -56,6 +57,7 @@ def doEpisodes(env, agent, n_episodes, max_actions_per_episode, verbose=True):
             print('return = ' + str(sum(rewards)))
 
         all_rewards.append(rewards)
+        agent.learn()
 
     return all_rewards
 
